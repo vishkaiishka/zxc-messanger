@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZXC Messenger</title>
+<style>
+:root{--bg:#0a0a0c;--p:#14141a;--p2:#1e1e27;--r:#e11d2e;--t:#eee;--m:#8a8a96}
+*{box-sizing:border-box;margin:0;font-family:Consolas,"Courier New",monospace}
+html,body{height:100%;background:var(--bg);color:var(--t)}
+button,input{font-size:15px;color:var(--t)}
+input{background:var(--p2);border:1px solid #2c2c38;border-radius:8px;padding:11px;width:100%;outline:0}
+input:focus{border-color:var(--r)}
+button{background:var(--r);border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:700}
+button.g{background:var(--p2)}
+.logo{font:900 56px Impact,"Arial Black",sans-serif;letter-spacing:8px;color:var(--r);text-shadow:2px 0 #0ff,-2px 0 #f0f;animation:gl 3s infinite}
+@keyframes gl{0%,92%,100%{transform:none;text-shadow:2px 0 #0ff,-2px 0 #f0f}95%{transform:skew(-8deg);text-shadow:-5px 0 #0ff,5px 0 #f0f}}
+@media(prefers-reduced-motion:reduce){.logo{animation:none}}
+#auth{min-height:100%;display:grid;place-items:center;padding:20px}
+.card{width:100%;max-width:360px;display:grid;gap:12px;text-align:center}
+.tabs{display:flex;gap:8px}.tabs button{flex:1;background:var(--p2)}.tabs button.on{background:var(--r)}
+#err{color:#ff6b6b;min-height:18px;font-size:13px}
+#app{display:none;height:100dvh;grid-template-columns:320px 1fr}
+#side{display:flex;flex-direction:column;border-right:1px solid #22222c;background:var(--p);min-height:0}
+.top{padding:12px;display:grid;gap:8px;border-bottom:1px solid #22222c}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.bar b{color:var(--r)}
+#list{overflow:auto;flex:1}
+.row{padding:12px 14px;cursor:pointer;border-bottom:1px solid #1a1a22;display:grid;gap:3px}
+.row:hover,.row.on{background:var(--p2)}
+.row small,.hint{color:var(--m)}.hint{padding:16px;font-size:13px}
+#main{display:flex;flex-direction:column;min-height:0;min-width:0}
+#empty{margin:auto;color:var(--m);text-align:center;padding:20px}
+#box{display:none;flex-direction:column;height:100%;min-height:0}
+.head{padding:12px;display:flex;gap:10px;align-items:center;background:var(--p);border-bottom:1px solid #22222c}
+.head b{flex:1}.bk{display:none}
+#msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:75%;padding:8px 11px;border-radius:12px;word-break:break-word}
+.m time{display:block;font-size:10px;color:#ffffff90;text-align:right;margin-top:2px}
+.in{background:var(--p2);align-self:flex-start}.out{background:#7a1019;align-self:flex-end}
+.gift{text-align:center;font-size:54px;padding:2px 14px}.gift small{display:block;font-size:12px}
+.send{display:flex;gap:8px;padding:10px;background:var(--p)}
+#gm{display:none;position:fixed;inset:0;background:#000c;place-items:center;z-index:5;padding:14px}
+.gbox{background:var(--p);border:1px solid var(--r);border-radius:12px;padding:14px;width:100%;max-width:520px;display:grid;gap:10px}
+#gl{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;max-height:60vh;overflow:auto}
+.gi{background:var(--p2);border-radius:10px;padding:10px 4px;text-align:center;font-size:34px;cursor:pointer;border:1px solid transparent}
+.gi:hover{border-color:var(--r)}.gi.cu{border-color:#5a1019}
+.gi b{display:block;font-size:12px}.gi small{font-size:12px;color:var(--m)}
+@media(max-width:700px){#app{grid-template-columns:1fr}#main{display:none}#app.open #side{display:none}#app.open #main{display:flex}.bk{display:inline-block}}
+</style></head>
+<body>
+
+<div id="auth"><div class="card">
+  <div class="logo">ZXC</div>
+  <div style="color:var(--m)">1000-7 · мессенджер для своих 💀</div>
+  <div class="tabs"><button id="tl" class="on" onclick="setMode('login')">Вход</button><button id="tr" onclick="setMode('reg')">Регистрация</button></div>
+  <input id="u" placeholder="Ник (a-z, 0-9, _)" autocomplete="username">
+  <input id="p" type="password" placeholder="Пароль (от 6 символов)" autocomplete="current-password" onkeydown="event.key=='Enter'&&auth()">
+  <div id="err"></div>
+  <button id="go" onclick="auth()">Войти</button>
+</div></div>
+
+<div id="app">
+  <div id="side">
+    <div class="top">
+      <div class="bar"><b id="me"></b><span>🪙 <span id="bal">0</span></span></div>
+      <div class="bar"><button class="g" onclick="bonus()">+50 монет (раз в час)</button><button class="g" onclick="sb.auth.signOut().then(()=>location.reload())">Выйти</button></div>
+      <input id="q" placeholder="Найти пользователя по нику…" oninput="search()">
+    </div>
+    <div id="list"></div>
+  </div>
+  <div id="main">
+    <div id="empty">💀<br>Выбери чат слева<br>или найди человека по нику</div>
+    <div id="box">
+      <div class="head"><button class="g bk" onclick="$('app').classList.remove('open')">←</button><b id="pn"></b><button onclick="$('gm').style.display='grid'">🎁 Подарок</button></div>
+      <div id="msgs"></div>
+      <div class="send"><input id="t" placeholder="Сообщение…" onkeydown="event.key=='Enter'&&send()"><button onclick="send()">➤</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="gm" onclick="if(event.target==this)this.style.display='none'"><div class="gbox">
+  <b>Выбери подарок (★ – кастомные)</b><div id="gl"></div>
+  <button class="g" onclick="$('gm').style.display='none'">Закрыть</button>
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script>
+// ВСТАВЬ СВОИ ДАННЫЕ ИЗ SUPABASE (Project Settings → API)
+const SUPABASE_URL='https://qoqguzqatwqwqhpfccmn.supabase.co';
+const SUPABASE_KEY='sb_publishable_rQi-joVpNO6d4zwpo0ZecQ_FZe14CCR';
+
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let me,peer=null,mode='login',gifts={},names={};
+
+function setMode(m){mode=m;$('tl').classList.toggle('on',m=='login');$('tr').classList.toggle('on',m=='reg');$('go').textContent=m=='login'?'Войти':'Создать аккаунт';$('err').textContent=''}
+async function auth(){
+  const u=$('u').value.trim().toLowerCase(),p=$('p').value,e=$('err');
+  if(!/^[a-z0-9_]{3,20}$/.test(u))return e.textContent='Ник: 3–20 символов, только a-z, 0-9 и _';
+  if(p.length<6)return e.textContent='Пароль: минимум 6 символов';
+  const email=u+'@zxc.chat';
+  const {error}=mode=='login'
+    ?await sb.auth.signInWithPassword({email,password:p})
+    :await sb.auth.signUp({email,password:p,options:{data:{username:u}}});
+  if(error)return e.textContent=error.message.includes('Invalid login')?'Неверный ник или пароль':error.message;
+  start();
+}
+async function start(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){$('err').textContent=$('err').textContent||'';return}
+  me=session.user.id;
+  $('auth').style.display='none';$('app').style.display='grid';
+  const {data:gs}=await sb.from('gifts').select('*').order('price');
+  (gs||[]).forEach(g=>gifts[g.id]=g);
+  $('gl').innerHTML=(gs||[]).map(g=>`<div class="gi${g.custom?' cu':''}" onclick="give('${g.id}')">${g.emoji}<b>${esc(g.name)}${g.custom?' ★':''}</b><small>🪙${g.price}</small></div>`).join('');
+  await refresh();
+  sb.channel('msgs').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},refresh).subscribe();
+}
+async function loadMe(){
+  const {data}=await sb.from('profiles').select('username,balance').eq('id',me).single();
+  if(data){$('me').textContent='@'+data.username;$('bal').textContent=data.balance}
+}
+async function refresh(){
+  await loadMe();
+  const {data:ms}=await sb.from('messages').select('*').order('created_at',{ascending:false}).limit(300);
+  const last={};
+  (ms||[]).forEach(m=>{const o=m.sender==me?m.receiver:m.sender;if(!last[o])last[o]=m});
+  const ids=Object.keys(last).filter(i=>!names[i]);
+  if(ids.length){const {data}=await sb.from('profiles').select('id,username').in('id',ids);(data||[]).forEach(p=>names[p.id]=p.username)}
+  if(!$('q').value)$('list').innerHTML=Object.entries(last).map(([id,m])=>
+    `<div class="row${id==peer?' on':''}" onclick="openChat('${id}')"><b>@${esc(names[id]||'?')}</b><small>${m.gift_id&&gifts[m.gift_id]?gifts[m.gift_id].emoji+' подарок':esc(m.body||'')}</small></div>`).join('')
+    ||'<p class="hint">Пока пусто. Найди кого-нибудь по нику ↑</p>';
+  if(peer)loadChat();
+}
+async function search(){
+  const q=$('q').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+  if(!q)return refresh();
+  const {data}=await sb.from('profiles').select('id,username').ilike('username',q+'%').neq('id',me).limit(10);
+  (data||[]).forEach(p=>names[p.id]=p.username);
+  $('list').innerHTML=(data||[]).map(p=>`<div class="row" onclick="openChat('${p.id}')"><b>@${esc(p.username)}</b></div>`).join('')||'<p class="hint">Никого не нашли</p>';
+}
+function openChat(id){
+  peer=id;$('q').value='';$('pn').textContent='@'+names[id];
+  $('empty').style.display='none';$('box').style.display='flex';$('app').classList.add('open');
+  refresh();
+}
+async function loadChat(){
+  const {data}=await sb.from('messages').select('*')
+    .or(`and(sender.eq.${me},receiver.eq.${peer}),and(sender.eq.${peer},receiver.eq.${me})`)
+    .order('created_at').limit(200);
+  $('msgs').innerHTML=(data||[]).map(m=>{
+    const g=m.gift_id&&gifts[m.gift_id];
+    const time=new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    return `<div class="m ${m.sender==me?'out':'in'}">${g?`<div class="gift">${g.emoji}<small>${esc(g.name)}</small></div>`:esc(m.body||'')}<time>${time}</time></div>`}).join('');
+  $('msgs').scrollTop=1e9;
+}
+async function send(){
+  const body=$('t').value.trim();if(!body||!peer)return;
+  $('t').value='';
+  const {error}=await sb.from('messages').insert({sender:me,receiver:peer,body});
+  if(error)alert(error.message);
+  loadChat();
+}
+async function give(id){
+  const {error}=await sb.rpc('send_gift',{to_user:peer,gift:id});
+  if(error)return alert(error.message);
+  $('gm').style.display='none';refresh();
+}
+async function bonus(){
+  const {error}=await sb.rpc('claim_bonus');
+  if(error)alert(error.message);
+  loadMe();
+}
+start();
+</script>
+</body></html>

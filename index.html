@@ -2,492 +2,361 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ZXC Messenger</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZXC</title>
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#07060b;--sf:#121018;--sf2:#1a1622;--tx:#f4efe8;--mu:#8d8496;
-  --ac:#d6ff3f;--mg:#ff2f8e;--cy:#49f0ff;--bd:#2a2433;--danger:#ff4d4d;
-  --me:#241833;--meT:#f7f2ff;
-}
+:root{--bg:#07060b;--sf:#14121a;--tx:#f6f1ea;--mu:#8e8698;--ac:#d6ff3f;--mg:#ff2f8e;--bd:#2c2636}
 *{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{font:15px/1.4 Manrope,system-ui,sans-serif;background:var(--bg);color:var(--tx);overflow:hidden}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font:15px/1.4 Manrope,system-ui,sans-serif}
 button,input,textarea{font:inherit;color:inherit}
-button{cursor:pointer;border:0;background:var(--sf2);border-radius:12px;padding:10px 14px}
-button.p{background:linear-gradient(135deg,var(--mg),#7a2cff);color:#fff;font-weight:700}
-button:disabled{opacity:.45;cursor:not-allowed}
-input,textarea{width:100%;background:#0c0a10;border:1px solid var(--bd);border-radius:12px;padding:12px 14px;outline:0}
-input:focus,textarea:focus{border-color:var(--ac)}
+button{cursor:pointer;border:0;background:#221e2b;border-radius:12px;padding:10px 14px}
+button.p{background:linear-gradient(135deg,var(--mg),#6d28ff);font-weight:700}
+input{width:100%;background:#0c0a10;border:1px solid var(--bd);border-radius:12px;padding:12px;outline:0}
+#auth{min-height:100%;display:flex;align-items:center;justify-content:center;padding:16px}
+.card{width:min(460px,100%);background:#121018ee;border:1px solid #fff2;border-radius:20px;padding:22px;display:grid;gap:10px}
+h1{font-family:"Russo One",sans-serif;margin:0;font-size:40px;color:var(--ac)}
+.err{color:#ff6b6b;font-size:13px;white-space:pre-wrap}
+.sql{font:12px/1.35 ui-monospace,monospace;background:#000;color:#d6ff3f;padding:10px;border-radius:10px;white-space:pre-wrap}
+#app{display:grid;grid-template-columns:320px 1fr;height:100vh}
+#side{background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;min-height:0}
+#side header,#top,#bar{padding:10px;display:flex;gap:8px;align-items:center}
+#list,#msgs{overflow:auto;flex:1}
+.it{display:flex;gap:10px;padding:10px 12px;cursor:pointer}
+.it.on,.it:hover{background:#fff1}
+.av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#3a1848;font-weight:800;flex:none}
+#main{display:flex;flex-direction:column;min-width:0;min-height:0}
+.b{max-width:75%;padding:8px 12px;border-radius:16px;background:#1c1824;margin:4px 0}
+.b.me{margin-left:auto;background:#2c1840}
+.b.gift{text-align:center;border:1px solid #ffe27a55}
+.e{font-size:64px;display:inline-block}
+.pulse{animation:p 1.2s infinite}.bounce{animation:b 1s infinite}.spin{animation:s 2.4s linear infinite}.fly{animation:f 1.4s infinite}.glow{animation:g 1.2s infinite}.glitch{animation:gl .7s infinite}
+@keyframes p{50%{transform:scale(1.15)}}
+@keyframes b{50%{transform:translateY(-8px)}}
+@keyframes s{to{transform:rotate(360deg)}}
+@keyframes f{50%{transform:translate(8px,-12px)}}
+@keyframes g{50%{filter:drop-shadow(0 0 10px #ffe27a)}}
+@keyframes gl{50%{transform:translate(-2px,1px) skewX(-8deg)}}
+.star{color:#ffe27a;font-weight:800}
+.ov{position:fixed;inset:0;background:#000a;display:flex;align-items:flex-end;justify-content:center}
+.sh{background:#14121a;width:min(520px,100%);max-height:86vh;overflow:auto;border-radius:16px 16px 0 0;padding:14px}
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.gi{background:#0c0a10;border-radius:12px;padding:8px;text-align:center;cursor:pointer}
+#call{position:fixed;inset:0;background:#120816f2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:5}
 .hide{display:none!important}
 .mu{color:var(--mu);font-size:12px}
-#scan{pointer-events:none;position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 3px);mix-blend-mode:multiply;z-index:80;opacity:.35}
-#auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:
-  radial-gradient(800px 400px at 10% -10%,#ff2f8e33,transparent 60%),
-  radial-gradient(700px 400px at 110% 110%,#d6ff3f22,transparent 55%),
-  var(--bg);z-index:40}
-.card{width:min(420px,100%);background:rgba(18,16,24,.9);border:1px solid #ffffff14;border-radius:22px;padding:26px;display:grid;gap:12px;box-shadow:0 30px 80px #000a}
-.logo{font-family:"Russo One",sans-serif;font-size:42px;letter-spacing:2px;margin:0;
-  background:linear-gradient(90deg,var(--ac),#fff,var(--mg));-webkit-background-clip:text;color:transparent;
-  animation:gl 2.8s infinite}
-@keyframes gl{0%,90%,100%{transform:none;filter:none}92%{transform:translate(-2px,1px);filter:hue-rotate(40deg)}94%{transform:translate(2px,-1px)}}
-.tabs{display:flex;gap:6px}
-.tabs button{flex:1}
-.tabs button.on{outline:1px solid var(--ac);color:var(--ac)}
-#app{display:grid;grid-template-columns:340px 1fr;height:100%}
-#side{background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;min-height:0}
-#side header{padding:14px;display:grid;gap:10px}
-.toprow{display:flex;align-items:center;gap:10px}
-.brand{font-family:"Russo One",sans-serif;font-size:22px;color:var(--ac)}
-.star{display:inline-flex;align-items:center;gap:4px;background:#1d1808;color:#ffe27a;border:1px solid #ffe27a55;border-radius:999px;padding:4px 10px;font-weight:700}
-#list{overflow:auto;flex:1}
-.it{display:flex;gap:10px;padding:12px 14px;align-items:center;cursor:pointer}
-.it:hover,.it.on{background:#ffffff0c}
-.av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--mg),#4b2fd0);display:grid;place-items:center;font-weight:800;flex:none;position:relative}
-.dot{position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:#3a3344;border:2px solid var(--sf)}
-.dot.on{background:var(--ac);box-shadow:0 0 8px var(--ac)}
-#main{display:flex;flex-direction:column;min-height:0;min-width:0;background:
-  radial-gradient(600px 200px at 80% 0,#ff2f8e14,transparent),var(--bg)}
-#top{padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;background:#0d0b12cc;backdrop-filter:blur(8px)}
-#msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
-.b{max-width:min(78%,560px);padding:8px 12px;border-radius:16px;background:var(--sf2);border:1px solid #ffffff10;word-wrap:break-word;position:relative}
-.b.me{align-self:flex-end;background:linear-gradient(180deg,#3a2458,#241833);border-color:#ff2f8e44}
-.b .meta{font-size:11px;color:var(--mu);margin-top:4px}
-.b.gift{text-align:center;background:linear-gradient(160deg,#2a1400,#1a1028);border-color:#ffe27a55}
-.b.gift .e{font-size:72px;display:inline-block}
-.e.pulse{animation:pulse 1.4s ease-in-out infinite}
-.e.bounce{animation:bounce 1.1s ease-in-out infinite}
-.e.spin{animation:spin 3.2s linear infinite}
-.e.float{animation:float 2.2s ease-in-out infinite}
-.e.fly{animation:fly 1.6s ease-in-out infinite}
-.e.glow{animation:glow 1.3s ease-in-out infinite;filter:drop-shadow(0 0 12px #ffe27a)}
-.e.glitch{animation:glitch 1.1s steps(2) infinite}
-@keyframes pulse{50%{transform:scale(1.12)}}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes float{50%{transform:translateY(-8px) rotate(-6deg)}}
-@keyframes fly{0%{transform:translate(-8px,8px) rotate(-12deg)}50%{transform:translate(10px,-14px) rotate(10deg)}100%{transform:translate(-8px,8px) rotate(-12deg)}}
-@keyframes glow{50%{transform:scale(1.15);filter:drop-shadow(0 0 18px #fff)}}
-@keyframes glitch{0%{transform:translate(0)}25%{transform:translate(-3px,1px) skewX(-6deg)}50%{transform:translate(3px,-1px)}75%{transform:translate(-1px,2px)}}
-.rx{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
-.rx span{background:#0006;border-radius:999px;padding:1px 6px;font-size:12px;cursor:pointer}
-#bar{padding:10px;display:flex;gap:6px;border-top:1px solid var(--bd);align-items:center;background:#0d0b12}
-#bar input{flex:1}
-.ov{position:fixed;inset:0;background:#000a;display:flex;align-items:flex-end;justify-content:center;z-index:50}
-@media(min-width:760px){.ov{align-items:center}}
-.sh{background:var(--sf);width:min(520px,100%);max-height:88vh;overflow:auto;border-radius:20px;padding:16px;border:1px solid #ffffff18}
-.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
-.gi{background:#0c0a10;border-radius:14px;padding:10px 6px;text-align:center;cursor:pointer;border:1px solid transparent}
-.gi:hover{border-color:var(--ac)}
-.gi .e{font-size:36px}
-.err{color:var(--danger);font-size:13px;min-height:1em}
-#call{position:fixed;inset:0;z-index:70;background:radial-gradient(circle at 50% 30%,#3a1040,#07060b 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
-.callbtns{display:flex;gap:16px}
-.callbtns button{width:68px;height:68px;border-radius:50%;font-size:22px}
-.hang{background:var(--danger)!important}
-.ok{background:#1db954!important}
-.empty{margin:auto;color:var(--mu);text-align:center;padding:24px}
-@media(max-width:800px){
-  #app{grid-template-columns:1fr}
-  #app.chat #side{display:none}
-  #app:not(.chat) #main{display:none}
-}
+@media(max-width:800px){#app{grid-template-columns:1fr}#app.chat #side{display:none}#app:not(.chat) #main{display:none}}
 </style>
 </head>
 <body>
-<div id="scan"></div>
 <div id="auth">
-  <form class="card" id="authform">
-    <h1 class="logo">ZXC</h1>
-    <div class="mu">мессенджер. cursed, но рабочий.</div>
-    <div class="tabs">
-      <button type="button" id="tabin" class="on">Вход</button>
-      <button type="button" id="tabup">Регистрация</button>
+  <form class="card" id="form">
+    <h1>ZXC</h1>
+    <div class="mu">ник + пароль. почта не нужна.</div>
+    <div style="display:flex;gap:6px">
+      <button type="button" id="tabin">вход</button>
+      <button type="button" id="tabup">регистрация</button>
     </div>
-    <input id="un" placeholder="юзернейм" autocomplete="username" required maxlength="24">
-    <input id="pw" type="password" placeholder="пароль" autocomplete="current-password" required minlength="6">
-    <input id="dn" class="hide" placeholder="как тебя звать" maxlength="32">
-    <div class="err" id="aerr"></div>
-    <button class="p" id="ago">Войти</button>
-    <div class="mu">Внутри аккаунт = username@zxc.local. Почту подтверждать не надо.</div>
+    <input id="un" placeholder="username" required>
+    <input id="pw" type="password" placeholder="пароль (от 6)" required>
+    <div class="err" id="err"></div>
+    <button class="p" id="go">войти</button>
+    <details>
+      <summary class="mu">если пишет permission denied или username null — вставь в SQL Editor</summary>
+      <div class="sql" id="sqlbox"></div>
+    </details>
   </form>
 </div>
 <div id="app" class="hide">
   <aside id="side">
     <header>
-      <div class="toprow">
-        <div class="brand">ZXC</div>
-        <div class="star" id="bal" title="звёзды">★ 0</div>
-        <div style="margin-left:auto;display:flex;gap:6px">
-          <button id="btnprof" title="профиль">я</button>
-          <button id="btnout" title="выйти">⎋</button>
-        </div>
-      </div>
-      <input id="q" placeholder="найти @юзера и начать чат">
+      <b>ZXC</b>
+      <span class="star" id="bal">★ 0</span>
+      <button id="mebtn" style="margin-left:auto">я</button>
+      <button id="out">выйти</button>
     </header>
+    <div style="padding:0 10px 8px"><input id="q" placeholder="ник человека"></div>
     <div id="list"></div>
   </aside>
-  <main id="main">
+  <section id="main">
     <div id="top" class="hide">
-      <button id="back" class="hide">←</button>
-      <div class="av" id="cav">?</div>
-      <div style="flex:1">
-        <b id="ctitle">чат</b>
-        <div class="mu" id="csub"></div>
-      </div>
-      <button id="btncall" title="голос">☎</button>
-      <button id="btngift" title="подарок">🎁</button>
+      <button id="back">←</button>
+      <b id="title">чат</b>
+      <button id="callbtn" style="margin-left:auto">звонок</button>
+      <button id="giftbtn">подарки</button>
     </div>
-    <div id="msgs"><div class="empty">выбери чат или найди человека по нику</div></div>
+    <div id="msgs"></div>
     <div id="bar" class="hide">
-      <button id="btnstk" title="стикеры">✦</button>
-      <input id="tx" placeholder="сообщение" autocomplete="off">
+      <button id="stk">✦</button>
+      <input id="tx" placeholder="сообщение">
       <button class="p" id="send">→</button>
     </div>
-  </main>
+  </section>
 </div>
 <div id="modal"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
 <script>
-const SUPABASE_URL = "https://qoqguzqatwqwqhpfccmn.supabase.co";
-const SUPABASE_KEY = "sb_publishable_rQi-joVpNO6d4zwpo0ZecQ_FZe14CCR";
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const URL_ = "https://qoqguzqatwqwqhpfccmn.supabase.co";
+const KEY = "sb_publishable_rQi-joVpNO6d4zwpo0ZecQ_FZe14CCR";
+const SQL = `grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on all tables in schema public to anon, authenticated;
+grant usage, select on all sequences in schema public to anon, authenticated;
+alter table public.profiles alter column username drop not null;
+alter table public.profiles alter column display_name drop not null;
+alter table public.profiles alter column avatar_url drop not null;
+drop policy if exists "Users join" on public.chat_members;
+drop policy if exists "members write" on public.chat_members;
+create policy "members write" on public.chat_members for insert with check (true);
+drop policy if exists "msg update" on public.messages;
+create policy "msg update" on public.messages for update using (true);`;
+document.getElementById("sqlbox").textContent = SQL;
+const sb = window.supabase.createClient(URL_, KEY);
 const GIFTS = [
-  {id:"heart",name:"Love Heart",emoji:"❤️",price:15,animation:"pulse"},
-  {id:"bear",name:"Teddy Bear",emoji:"🧸",price:15,animation:"bounce"},
-  {id:"box",name:"Gift Box",emoji:"🎁",price:25,animation:"spin"},
-  {id:"rose",name:"Red Rose",emoji:"🌹",price:25,animation:"float"},
-  {id:"cake",name:"Birthday Cake",emoji:"🎂",price:50,animation:"bounce"},
-  {id:"bouquet",name:"Bouquet",emoji:"💐",price:50,animation:"float"},
-  {id:"rocket",name:"Rocket",emoji:"🚀",price:50,animation:"fly"},
-  {id:"champagne",name:"Champagne",emoji:"🍾",price:50,animation:"spin"},
-  {id:"trophy",name:"Trophy",emoji:"🏆",price:100,animation:"bounce"},
-  {id:"star",name:"Telegram Star",emoji:"⭐",price:75,animation:"glow"},
-  {id:"skull",name:"Cursed Skull",emoji:"💀",price:40,animation:"glitch",custom:true},
-  {id:"void",name:"Void Heart",emoji:"🖤",price:35,animation:"pulse",custom:true},
-  {id:"neon",name:"Neon Cross",emoji:"✝️",price:60,animation:"glow",custom:true},
-  {id:"cursed",name:"ZXC Cursed",emoji:"☠️",price:80,animation:"glitch",custom:true}
-];
-const STICKERS = ["💀","☠️","🖤","⚡","🔥","😈","🤡","👀","🗿","💸","🧪","🩸","🕷️","⛓️","🦇","🌙","💊","🎲","🧿","🧨","👻","🦾","🫠","🫡"];
-const REACTS = ["💀","❤️","🔥","😂","⭐","🤮"];
+  ["heart","Сердце","❤️",15,"pulse"],["bear","Мишка","🧸",15,"bounce"],["box","Коробка","🎁",25,"spin"],
+  ["rose","Роза","🌹",25,"pulse"],["cake","Торт","🎂",50,"bounce"],["rocket","Ракета","🚀",50,"fly"],
+  ["star","Звезда","⭐",75,"glow"],["skull","Череп","💀",40,"glitch"],["void","Пустота","🖤",35,"pulse"],
+  ["cursed","ZXC","☠️",80,"glitch"]
+].map(([id,name,emoji,price,animation])=>({id,name,emoji,price,animation}));
+const STICK = ["💀","☠️","🖤","⚡","🔥","😈","🤡","👀","🗿","💸","🧪","🕷️","⛓️","🦇"];
 const $ = id => document.getElementById(id);
-const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&","<":"<",">":">","\"":""","'":"&#39;"}[c]));
-let ME=null, MODE="in", CUR=null, MSGS=[], CHATS=[], USERS={}, GIFTM={}, msgCh=null, presCh=null;
-let pc=null, localStream=null, callCh=null, callRole=null;
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&","<":"<",">":">",'"':""","'":"&#39;"}[c]));
+let mode="in", me=null, cur=null, msgs=[], chats=[];
+let pc=null, mic=null, callCh=null;
 
-function mail(u){return u.trim().toLowerCase().replace(/[^a-z0-9_\.]/g,"")+"@zxc.local"}
-function giftOf(id){return GIFTM[id]||GIFTS.find(g=>g.id===id)||{emoji:"🎁",name:id,animation:"pulse",price:0}}
-
-$("tabin").onclick=()=>{MODE="in";$("tabin").classList.add("on");$("tabup").classList.remove("on");$("dn").classList.add("hide");$("ago").textContent="Войти"};
-$("tabup").onclick=()=>{MODE="up";$("tabup").classList.add("on");$("tabin").classList.remove("on");$("dn").classList.remove("hide");$("ago").textContent="Создать"};
-
-$("authform").onsubmit=async e=>{
+$("tabin").onclick=()=>{mode="in";$("go").textContent="войти"};
+$("tabup").onclick=()=>{mode="up";$("go").textContent="создать"};
+$("form").onsubmit=async e=>{
   e.preventDefault();
   const un=$("un").value.trim().toLowerCase().replace(/^@/,"");
   const pw=$("pw").value;
-  $("aerr").textContent="";
-  $("ago").disabled=true;
+  $("err").textContent="...";
+  $("go").disabled=true;
   try{
-    if(!/^[a-z0-9_\.]{3,24}$/.test(un)) throw new Error("ник: 3–24 символа, латиница, цифры, _");
-    if(MODE==="up"){
-      const {data,error}=await sb.auth.signUp({email:mail(un),password:pw});
+    if(!/^[a-z0-9_]{3,24}$/.test(un)) throw new Error("ник: латиница, цифры, _, от 3 до 24");
+    const email=un+"@zxc.local";
+    if(mode==="up"){
+      const {data,error}=await sb.auth.signUp({email,password:pw,options:{data:{username:un,display_name:un}}});
       if(error) throw error;
-      const uid=data.user?.id;
-      if(!uid) throw new Error("нет user id — проверь, что Confirm email выключен");
-      const {error:pe}=await sb.from("profiles").insert({id:uid,username:un,display_name:$("dn").value.trim()||un,balance:100,status:"online"});
-      if(pe && !String(pe.message).includes("duplicate")) throw pe;
       if(!data.session){
-        const r=await sb.auth.signInWithPassword({email:mail(un),password:pw});
+        const r=await sb.auth.signInWithPassword({email,password:pw});
         if(r.error) throw r.error;
       }
     }else{
-      const {error}=await sb.auth.signInWithPassword({email:mail(un),password:pw});
+      const {error}=await sb.auth.signInWithPassword({email,password:pw});
       if(error) throw error;
     }
-    await boot();
-  }catch(err){$("aerr").textContent=err.message||String(err)}
-  $("ago").disabled=false;
+    await start();
+  }catch(err){
+    const m=err.message||String(err);
+    $("err").textContent=m+"\n\nОткрой SQL выше и выполни его в Supabase → SQL Editor, потом снова регистрацию.";
+  }
+  $("go").disabled=false;
 };
 
-async function boot(){
-  const {data}=await sb.auth.getSession();
-  if(!data.session) return;
-  const uid=data.session.user.id;
-  let {data:p,error}=await sb.from("profiles").select("*").eq("id",uid).maybeSingle();
-  if(error){$("aerr").textContent="profiles: "+error.message;return}
+async function start(){
+  const {data}=await sb.auth.getUser();
+  const u=data.user;
+  if(!u) return;
+  const un=(u.email||"").split("@")[0];
+  let {data:p,error}=await sb.from("profiles").select("*").eq("id",u.id).maybeSingle();
+  if(error) throw error;
   if(!p){
-    const un=(data.session.user.email||"").split("@")[0]||"user";
-    const ins=await sb.from("profiles").insert({id:uid,username:un,display_name:un,balance:100,status:"online"}).select().single();
-    if(ins.error){$("aerr").textContent=ins.error.message;return}
+    const ins=await sb.from("profiles").insert({id:u.id,username:un,display_name:un,balance:100,status:"online"}).select().single();
+    if(ins.error) throw ins.error;
     p=ins.data;
+  }else if(!p.username){
+    const up=await sb.from("profiles").update({username:un,display_name:p.display_name||un,balance:p.balance??100}).eq("id",u.id).select().single();
+    if(up.error) throw up.error;
+    p=up.data;
   }
-  ME=p;
+  me=p;
   $("auth").classList.add("hide");
   $("app").classList.remove("hide");
-  paintMe();
-  await sb.from("profiles").update({status:"online",last_seen:new Date().toISOString()}).eq("id",ME.id);
-  presCh=sb.channel("online-zxc");
-  presCh.on("presence",{event:"sync"},()=>renderList()).subscribe(async st=>{
-    if(st==="SUBSCRIBED") await presCh.track({uid:ME.id,username:ME.username,at:Date.now()});
-  });
-  sb.channel("msgs-all").on("postgres_changes",{event:"INSERT",schema:"public",table:"messages"}, payload=>{
-    if(CUR && payload.new.chat_id===CUR){ if(!MSGS.some(m=>m.id===payload.new.id)){MSGS.push(payload.new);renderMsgs()} }
+  $("bal").textContent="★ "+(me.balance||0);
+  sb.channel("rt-msg").on("postgres_changes",{event:"INSERT",schema:"public",table:"messages"}, ev=>{
+    if(cur && ev.new.chat_id===cur && !msgs.some(m=>m.id===ev.new.id)){msgs.push(ev.new);drawMsgs()}
     loadChats();
+  }).on("postgres_changes",{event:"UPDATE",schema:"public",table:"messages"}, ev=>{
+    if(cur && ev.new.chat_id===cur){msgs=msgs.map(m=>m.id===ev.new.id?ev.new:m);drawMsgs()}
   }).subscribe();
   await loadChats();
-  setInterval(()=>{ if(ME) sb.from("profiles").update({last_seen:new Date().toISOString(),status:"online"}).eq("id",ME.id); },20000);
 }
-function paintMe(){$("bal").textContent="★ "+(ME.balance||0)}
-function onlineSet(){
-  const s=new Set();
-  const st=presCh?.presenceState?.()||{};
-  Object.values(st).flat().forEach(x=>{if(x.uid)s.add(x.uid)});
-  return s;
-}
+
 async function loadChats(){
-  const {data,error}=await sb.from("chat_members").select("chat_id, chats(id,title,is_group,created_at)").eq("user_id",ME.id);
-  if(error){$("list").innerHTML='<div class="empty">'+esc(error.message)+'</div>';return}
-  const ids=(data||[]).map(r=>r.chat_id);
-  let members=[];
+  const {data,error}=await sb.from("chat_members").select("chat_id").eq("user_id",me.id);
+  if(error){$("list").innerHTML='<div class="mu" style="padding:12px">'+esc(error.message)+'</div>';return}
+  const ids=(data||[]).map(x=>x.chat_id);
+  chats=[];
   if(ids.length){
-    const m=await sb.from("chat_members").select("chat_id,user_id, profiles(id,username,display_name,status)").in("chat_id",ids);
-    members=m.data||[];
-    members.forEach(x=>{ if(x.profiles) USERS[x.profiles.id]=x.profiles });
+    const mem=await sb.from("chat_members").select("chat_id,user_id").in("chat_id",ids);
+    const others=[...new Set((mem.data||[]).map(x=>x.user_id).filter(id=>id!==me.id))];
+    let profs={};
+    if(others.length){
+      const pr=await sb.from("profiles").select("id,username,display_name").in("id",others);
+      (pr.data||[]).forEach(p=>{profs[p.id]=p});
+    }
+    const by={};
+    (mem.data||[]).forEach(x=>{(by[x.chat_id]||=[]).push(x.user_id)});
+    chats=ids.map(id=>{
+      const other=(by[id]||[]).find(x=>x!==me.id);
+      const p=profs[other];
+      return {id, title:p?.display_name||p?.username||"чат", other};
+    });
   }
-  CHATS=(data||[]).map(r=>{
-    const mem=members.filter(x=>x.chat_id===r.chat_id && x.user_id!==ME.id);
-    const other=mem[0]?.profiles;
-    return {id:r.chat_id, title:r.chats?.is_group? (r.chats.title||"группа") : (other?.display_name||other?.username||"чат"), other};
-  });
-  renderList();
+  drawList();
 }
-function renderList(){
-  const on=onlineSet();
-  const q=$("q").value.trim().toLowerCase();
-  $("list").innerHTML = CHATS.map(c=>{
-    const live=c.other && on.has(c.other.id);
-    return `<div class="it ${c.id===CUR?"on":""}" data-c="${c.id}"><div class="av">${esc((c.title||"?")[0].toUpperCase())}<i class="dot ${live?"on":""}"></i></div><div><b>${esc(c.title)}</b><div class="mu">${c.other? "@"+esc(c.other.username):""}</div></div></div>`;
-  }).join("") || '<div class="empty">чатов нет</div>';
-  if(q.length>=2){
-    sb.from("profiles").select("id,username,display_name,status").ilike("username","%"+q.replace(/[^a-z0-9_\.]/g,"")+"%").neq("id",ME.id).limit(8)
-      .then(({data})=>{
-        const extra=(data||[]).map(u=>`<div class="it" data-u="${u.id}" data-un="${esc(u.username)}"><div class="av">+</div><div><b>открыть @${esc(u.username)}</b><div class="mu">${esc(u.display_name||"")}</div></div></div>`).join("");
-        if(extra) $("list").insertAdjacentHTML("afterbegin", extra);
-      });
-  }
+function drawList(){
+  $("list").innerHTML=chats.map(c=>`<div class="it ${c.id===cur?"on":""}" data-c="${c.id}"><div class="av">${esc((c.title||"?")[0])}</div><div><b>${esc(c.title)}</b></div></div>`).join("")||'<div class="mu" style="padding:12px">чатов нет. введи ник сверху</div>';
 }
-$("q").oninput=()=>renderList();
-$("list").onclick=e=>{
-  const u=e.target.closest("[data-u]");
-  const c=e.target.closest("[data-c]");
-  if(u) openDm(u.dataset.u, u.dataset.un);
-  else if(c) openChat(c.dataset.c);
+$("q").onkeydown=async e=>{
+  if(e.key!=="Enter") return;
+  const un=$("q").value.trim().toLowerCase().replace(/^@/,"");
+  if(!un) return;
+  const {data,error}=await sb.from("profiles").select("id,username,display_name").eq("username",un).maybeSingle();
+  if(error) return alert(error.message);
+  if(!data) return alert("нет такого ника");
+  if(data.id===me.id) return alert("это ты");
+  await openDm(data.id);
+  $("q").value="";
 };
-async function openDm(otherId, username){
-  const {data:mine}=await sb.from("chat_members").select("chat_id").eq("user_id",ME.id);
+$("list").onclick=e=>{const n=e.target.closest("[data-c]"); if(n) openChat(n.dataset.c)};
+async function openDm(other){
+  const {data:mine}=await sb.from("chat_members").select("chat_id").eq("user_id",me.id);
   const ids=(mine||[]).map(x=>x.chat_id);
   if(ids.length){
-    const {data:hit}=await sb.from("chat_members").select("chat_id").eq("user_id",otherId).in("chat_id",ids);
-    if(hit&&hit[0]) return openChat(hit[0].chat_id);
+    const hit=await sb.from("chat_members").select("chat_id").eq("user_id",other).in("chat_id",ids).limit(1);
+    if(hit.data&&hit.data[0]) return openChat(hit.data[0].chat_id);
   }
-  const {data:chat,error}=await sb.from("chats").insert({is_group:false,title:null}).select().single();
-  if(error) return alert(error.message);
-  const ins=await sb.from("chat_members").insert([{chat_id:chat.id,user_id:ME.id},{chat_id:chat.id,user_id:otherId}]);
-  if(ins.error){
-    await sb.from("chat_members").insert({chat_id:chat.id,user_id:ME.id});
-    alert("Не смог добавить второго участника.\nВ SQL Editor выполни:\n\ndrop policy if exists \"Users join\" on public.chat_members;\ncreate policy \"members write\" on public.chat_members for insert with check (true);\ncreate policy \"msg update\" on public.messages for update using (true);");
-    return;
-  }
-  $("q").value="";
+  const chat=await sb.from("chats").insert({is_group:false}).select().single();
+  if(chat.error) return alert(chat.error.message);
+  const ins=await sb.from("chat_members").insert([{chat_id:chat.data.id,user_id:me.id},{chat_id:chat.data.id,user_id:other}]);
+  if(ins.error) return alert(ins.error.message+"\n\nВыполни SQL со экрана входа (policy members write).");
   await loadChats();
-  openChat(chat.id);
+  openChat(chat.data.id);
 }
 async function openChat(id){
-  CUR=id;
+  cur=id;
   $("app").classList.add("chat");
   $("top").classList.remove("hide");
   $("bar").classList.remove("hide");
-  const c=CHATS.find(x=>x.id===id);
-  $("ctitle").textContent=c?.title||"чат";
-  $("csub").textContent=c?.other? "@"+c.other.username : "";
-  $("cav").textContent=((c?.title||"?")[0]||"?").toUpperCase();
-  const {data,error}=await sb.from("messages").select("*").eq("chat_id",id).order("created_at",{ascending:true}).limit(200);
-  if(error){$("msgs").innerHTML='<div class="empty">'+esc(error.message)+'</div>';return}
-  MSGS=data||[];
-  renderMsgs();
-  renderList();
+  const c=chats.find(x=>x.id===id);
+  $("title").textContent=c?.title||"чат";
+  const r=await sb.from("messages").select("*").eq("chat_id",id).order("created_at",{ascending:true}).limit(200);
+  if(r.error){$("msgs").textContent=r.error.message;return}
+  msgs=r.data||[];
+  drawMsgs();
+  drawList();
 }
-function renderMsgs(){
-  if(!MSGS.length){$("msgs").innerHTML='<div class="empty">пусто. напиши первым.</div>';return}
-  $("msgs").innerHTML=MSGS.map(m=>{
-    const me=m.sender_id===ME.id;
-    const g=m.type==="gift"? giftOf(m.gift_id):null;
-    const body = m.type==="gift"
-      ? `<div class="e ${esc(g.animation)}">${g.emoji}</div><div>${esc(g.name)}</div><div class="mu">${esc(m.content||"")}</div>`
-      : m.type==="sticker"
-        ? `<div class="e bounce" style="font-size:54px">${esc(m.content)}</div>`
-        : esc(m.content||"");
-    const rx=m.reactions&&typeof m.reactions==="object"? Object.entries(m.reactions).map(([k,v])=>`<span data-rx="${esc(k)}" data-m="${m.id}">${esc(k)} ${v}</span>`).join(""):"";
-    const t=new Date(m.created_at).toLocaleTimeString("ru",{hour:"2-digit",minute:"2-digit"});
-    return `<div class="b ${me?"me":""} ${m.type==="gift"?"gift":""}" data-m="${m.id}">${body}<div class="meta">${t}</div><div class="rx">${rx}</div></div>`;
-  }).join("");
+function drawMsgs(){
+  $("msgs").innerHTML=msgs.map(m=>{
+    const meOwn=m.sender_id===me.id;
+    let body=esc(m.content||"");
+    if(m.type==="gift"){
+      const g=GIFTS.find(x=>x.id===m.gift_id)||{emoji:"🎁",name:"",animation:"pulse"};
+      body=`<div class="e ${g.animation}">${g.emoji}</div><div>${esc(g.name)}</div><div class="mu">${esc(m.content||"")}</div>`;
+    }else if(m.type==="sticker"){
+      body=`<div class="e bounce">${esc(m.content)}</div>`;
+    }
+    const rx=m.reactions&&typeof m.reactions==="object"?Object.entries(m.reactions).map(([k,v])=>`${k}${v}`).join(" "):"";
+    return `<div class="b ${meOwn?"me":""} ${m.type==="gift"?"gift":""}" data-m="${m.id}">${body}<div class="mu">${rx}</div></div>`;
+  }).join("")||'<div class="mu" style="padding:16px">пусто</div>';
   $("msgs").scrollTop=$("msgs").scrollHeight;
 }
 $("msgs").onclick=async e=>{
-  const b=e.target.closest(".b");
-  if(!b) return;
-  const id=b.dataset.m;
-  const pick=prompt("реакция: "+REACTS.join(" ")+"\nили свой эмодзи", "💀");
-  if(!pick) return;
-  const m=MSGS.find(x=>x.id===id);
+  const b=e.target.closest("[data-m]"); if(!b) return;
+  const emoji=prompt("реакция","💀"); if(!emoji) return;
+  const m=msgs.find(x=>x.id===b.dataset.m);
   const reactions={...(m.reactions||{})};
-  reactions[pick]=(reactions[pick]||0)+1;
-  const {error}=await sb.from("messages").update({reactions}).eq("id",id);
-  if(error){ alert("Нет права обновлять сообщения. SQL:\ncreate policy \"msg update\" on public.messages for update using (true);"); return }
-  m.reactions=reactions; renderMsgs();
+  reactions[emoji]=(reactions[emoji]||0)+1;
+  const {error}=await sb.from("messages").update({reactions}).eq("id",m.id);
+  if(error) return alert(error.message);
+  m.reactions=reactions; drawMsgs();
 };
-async function send(type, content, gift_id){
-  if(!CUR||!ME) return;
-  const row={chat_id:CUR,sender_id:ME.id,content,type,gift_id:gift_id||null};
-  const {data,error}=await sb.from("messages").insert(row).select().single();
-  if(error){alert(error.message);return}
-  if(!MSGS.some(m=>m.id===data.id)){MSGS.push(data);renderMsgs()}
+async function send(type,content,gift_id){
+  const r=await sb.from("messages").insert({chat_id:cur,sender_id:me.id,type,content,gift_id}).select().single();
+  if(r.error) return alert(r.error.message);
+  if(!msgs.some(m=>m.id===r.data.id)){msgs.push(r.data);drawMsgs()}
 }
-$("send").onclick=()=>{
-  const t=$("tx").value.trim();
-  if(!t) return;
-  $("tx").value="";
-  send("text", t, null);
-};
-$("tx").onkeydown=e=>{ if(e.key==="Enter"){e.preventDefault();$("send").click()} };
-function modal(html){$("modal").innerHTML=`<div class="ov" onclick="if(event.target===this)this.remove()"><div class="sh">${html}</div></div>`}
-$("btngift").onclick=()=>{
-  modal(`<h3 style="margin:0 0 8px">Подарки <span class="star">★ ${ME.balance||0}</span></h3>
-    <div class="gg">${GIFTS.map(g=>`<div class="gi" data-g="${g.id}"><div class="e ${g.animation}">${g.emoji}</div><b>${esc(g.name)}</b><small class="mu">${g.custom?"zxc · ":""}★ ${g.price}</small></div>`).join("")}</div>`);
+$("send").onclick=()=>{const t=$("tx").value.trim(); if(!t) return; $("tx").value=""; send("text",t,null)};
+$("tx").onkeydown=e=>{if(e.key==="Enter") $("send").click()};
+function sheet(html){$("modal").innerHTML=`<div class="ov" onclick="if(event.target===this)this.remove()"><div class="sh">${html}</div></div>`}
+$("giftbtn").onclick=()=>{
+  sheet(`<div class="star">★ ${me.balance||0}</div><div class="gg">${GIFTS.map(g=>`<div class="gi" data-g="${g.id}"><div class="e ${g.animation}">${g.emoji}</div>${g.name}<div class="mu">★${g.price}</div></div>`).join("")}</div>`);
   $("modal").querySelector(".gg").onclick=async ev=>{
     const el=ev.target.closest("[data-g]"); if(!el) return;
-    const g=giftOf(el.dataset.g);
-    if((ME.balance||0)<g.price){alert("не хватает звёзд");return}
-    const note=prompt("подпись к подарку","")??"";
-    const {error}=await sb.from("profiles").update({balance:ME.balance-g.price}).eq("id",ME.id);
-    if(error){alert(error.message);return}
-    ME.balance-=g.price; paintMe();
-    const c=CHATS.find(x=>x.id===CUR);
-    await sb.from("user_gifts").insert({gift_id:g.id,from_user:ME.id,to_user:c?.other?.id||ME.id});
+    const g=GIFTS.find(x=>x.id===el.dataset.g);
+    if((me.balance||0)<g.price) return alert("мало звёзд");
+    const note=prompt("подпись","")??"";
+    const up=await sb.from("profiles").update({balance:me.balance-g.price}).eq("id",me.id);
+    if(up.error) return alert(up.error.message);
+    me.balance-=g.price; $("bal").textContent="★ "+me.balance;
+    const c=chats.find(x=>x.id===cur);
+    await sb.from("user_gifts").insert({gift_id:g.id,from_user:me.id,to_user:c?.other||me.id});
     $("modal").innerHTML="";
-    send("gift", note, g.id);
+    send("gift",note,g.id);
   };
 };
-$("btnstk").onclick=()=>{
-  modal(`<h3 style="margin:0 0 8px">Стикеры</h3><div class="gg">${STICKERS.map(s=>`<div class="gi" data-s="${s}"><div class="e">${s}</div></div>`).join("")}</div>`);
+$("stk").onclick=()=>{
+  sheet(`<div class="gg">${STICK.map(s=>`<div class="gi" data-s="${s}"><div class="e">${s}</div></div>`).join("")}</div>`);
   $("modal").querySelector(".gg").onclick=ev=>{
     const el=ev.target.closest("[data-s]"); if(!el) return;
-    $("modal").innerHTML="";
-    send("sticker", el.dataset.s, null);
+    $("modal").innerHTML=""; send("sticker",el.dataset.s,null);
   };
 };
-$("btnprof").onclick=()=>{
-  modal(`<h3>@${esc(ME.username)}</h3>
-    <div class="star" style="width:max-content">★ ${ME.balance}</div>
-    <p class="mu">Имя</p>
-    <input id="ndn" value="${esc(ME.display_name||"")}">
-    <p class="mu">Пополнить звёзды (демо, без оплаты)</p>
-    <div style="display:flex;gap:8px">
-      <button data-add="50">+50 ★</button>
-      <button data-add="100">+100 ★</button>
-      <button data-add="500">+500 ★</button>
-    </div>
-    <button class="p" id="savep">Сохранить имя</button>`);
-  $("savep").onclick=async()=>{
-    const display_name=$("ndn").value.trim()||ME.username;
-    const {error}=await sb.from("profiles").update({display_name}).eq("id",ME.id);
-    if(error) return alert(error.message);
-    ME.display_name=display_name; $("modal").innerHTML="";
-  };
-  $("modal").querySelector(".sh").onclick=async ev=>{
-    const b=ev.target.closest("[data-add]"); if(!b) return;
-    const add=+b.dataset.add;
-    const {error}=await sb.from("profiles").update({balance:(ME.balance||0)+add}).eq("id",ME.id);
-    if(error) return alert(error.message);
-    ME.balance+=add; paintMe(); $("modal").innerHTML="";
-  };
+$("mebtn").onclick=async()=>{
+  const add=prompt("сколько звёзд начислить (демо)","100");
+  if(!add) return;
+  const n=Math.max(0,parseInt(add,10)||0);
+  const up=await sb.from("profiles").update({balance:(me.balance||0)+n}).eq("id",me.id);
+  if(up.error) return alert(up.error.message);
+  me.balance+=n; $("bal").textContent="★ "+me.balance;
 };
-$("btnout").onclick=async()=>{
-  await sb.from("profiles").update({status:"offline"}).eq("id",ME.id);
-  await sb.auth.signOut(); location.reload();
-};
-$("back").onclick=()=>{$("app").classList.remove("chat")};
-if(matchMedia("(max-width:800px)").matches) $("back").classList.remove("hide");
+$("out").onclick=async()=>{await sb.auth.signOut(); location.reload()};
+$("back").onclick=()=>$("app").classList.remove("chat");
 
-function closeCall(){
-  try{pc?.close()}catch(e){}
-  pc=null;
-  localStream?.getTracks().forEach(t=>t.stop());
-  localStream=null;
-  if(callCh){sb.removeChannel(callCh);callCh=null}
-  $("callbox")?.remove();
+function killCall(){
+  try{pc&&pc.close()}catch(e){}
+  pc=null; mic&&mic.getTracks().forEach(t=>t.stop()); mic=null;
+  if(callCh){sb.removeChannel(callCh); callCh=null}
+  $("call")&&$("call").remove();
 }
-function callUI(title, sub, buttons){
-  closeCall();
-  const d=document.createElement("div");
-  d.id="callbox"; d.innerHTML=`<div id="call"><div class="av" style="width:96px;height:96px;font-size:36px">${esc((title||"?")[0])}</div><h2 style="margin:0">${esc(title)}</h2><div class="mu">${esc(sub)}</div><audio id="remote" autoplay></audio><div class="callbtns">${buttons}</div></div>`;
-  document.body.appendChild(d);
-}
-async function ensurePC(){
+async function micOn(){
   pc=new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
-  localStream=await navigator.mediaDevices.getUserMedia({audio:true});
-  localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
-  pc.ontrack=ev=>{ const a=$("remote"); if(a) a.srcObject=ev.streams[0]; };
-  pc.onicecandidate=ev=>{ if(ev.candidate) callCh.send({type:"broadcast",event:"ice",payload:{from:ME.id,candidate:ev.candidate}}); };
+  mic=await navigator.mediaDevices.getUserMedia({audio:true});
+  mic.getTracks().forEach(t=>pc.addTrack(t,mic));
+  pc.ontrack=ev=>{const a=document.getElementById("ra"); if(a) a.srcObject=ev.streams[0]};
+  pc.onicecandidate=ev=>{ if(ev.candidate&&callCh) callCh.send({type:"broadcast",event:"ice",payload:{from:me.id,c:ev.candidate}}) };
 }
-function bindCall(chatId){
-  callCh=sb.channel("call-"+chatId);
-  callCh.on("broadcast",{event:"offer"}, async ({payload})=>{
-    if(payload.from===ME.id || callRole) return;
-    const c=CHATS.find(x=>x.id===chatId);
-    callUI(c?.title||"звонок","входящий",`<button class="ok" id="acc">✓</button><button class="hang" id="dec">✕</button>`);
-    $("dec").onclick=()=>{ callCh.send({type:"broadcast",event:"hang",payload:{from:ME.id}}); closeCall(); };
-    $("acc").onclick=async()=>{
-      callRole="callee";
-      await ensurePC();
-      await pc.setRemoteDescription(payload.sdp);
-      const answer=await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      callCh.send({type:"broadcast",event:"answer",payload:{from:ME.id,sdp:pc.localDescription}});
-      $("callbox").querySelector(".mu").textContent="на связи";
-      $("callbox").querySelector(".callbtns").innerHTML=`<button class="hang" id="hang2">✕</button>`;
-      $("hang2").onclick=()=>{callCh.send({type:"broadcast",event:"hang",payload:{from:ME.id}});closeCall()};
-    };
-  }).on("broadcast",{event:"answer"}, async ({payload})=>{
-    if(payload.from===ME.id||!pc) return;
-    await pc.setRemoteDescription(payload.sdp);
-    const mu=$("callbox")?.querySelector(".mu"); if(mu) mu.textContent="на связи";
-  }).on("broadcast",{event:"ice"}, async ({payload})=>{
-    if(payload.from===ME.id||!pc||!payload.candidate) return;
-    try{await pc.addIceCandidate(payload.candidate)}catch(e){}
-  }).on("broadcast",{event:"hang"}, ({payload})=>{
-    if(payload.from!==ME.id) closeCall();
-  }).subscribe();
-}
-$("btncall").onclick=async()=>{
-  if(!CUR) return;
-  const c=CHATS.find(x=>x.id===CUR);
-  callRole="caller";
-  callUI(c?.title||"звонок","зовём…",`<button class="hang" id="hang">✕</button>`);
-  $("hang").onclick=()=>{callCh?.send({type:"broadcast",event:"hang",payload:{from:ME.id}});closeCall()};
+$("callbtn").onclick=async()=>{
+  if(!cur) return;
+  killCall();
+  const box=document.createElement("div");
+  box.id="call";
+  box.innerHTML=`<b>звонок</b><div class="mu" id="cst">зовём</div><audio id="ra" autoplay></audio><button id="hang">сбросить</button>`;
+  document.body.appendChild(box);
+  $("hang").onclick=()=>{callCh&&callCh.send({type:"broadcast",event:"bye",payload:{from:me.id}}); killCall()};
   try{
-    bindCall(CUR);
-    await ensurePC();
-    const offer=await pc.createOffer();
-    await pc.setLocalDescription(offer);
-    await new Promise(r=>setTimeout(r,400));
-    callCh.send({type:"broadcast",event:"offer",payload:{from:ME.id,sdp:pc.localDescription}});
-  }catch(err){alert(err.message||"нет микрофона");closeCall()}
+    callCh=sb.channel("call-"+cur);
+    callCh.on("broadcast",{event:"answer"}, async ({payload})=>{ if(payload.from!==me.id) await pc.setRemoteDescription(payload.sdp); $("cst").textContent="на связи"; })
+      .on("broadcast",{event:"ice"}, async ({payload})=>{ if(payload.from!==me.id&&payload.c) try{await pc.addIceCandidate(payload.c)}catch(e){} })
+      .on("broadcast",{event:"bye"}, ({payload})=>{ if(payload.from!==me.id) killCall(); })
+      .on("broadcast",{event:"offer"}, async ({payload})=>{
+        if(payload.from===me.id||pc) return;
+        $("cst").textContent="входящий";
+        if(!confirm("принять звонок?")) { callCh.send({type:"broadcast",event:"bye",payload:{from:me.id}}); return killCall(); }
+        await micOn();
+        await pc.setRemoteDescription(payload.sdp);
+        const ans=await pc.createAnswer(); await pc.setLocalDescription(ans);
+        callCh.send({type:"broadcast",event:"answer",payload:{from:me.id,sdp:pc.localDescription}});
+        $("cst").textContent="на связи";
+      }).subscribe();
+    await micOn();
+    const offer=await pc.createOffer(); await pc.setLocalDescription(offer);
+    setTimeout(()=>callCh.send({type:"broadcast",event:"offer",payload:{from:me.id,sdp:pc.localDescription}}),500);
+  }catch(err){ alert(err.message||"микрофон"); killCall(); }
 };
 
-sb.auth.getSession().then(({data})=>{ if(data.session) boot(); });
+sb.auth.getSession().then(({data})=>{ if(data.session) start().catch(e=>{$("err").textContent=e.message}) });
 </script>
 </body>
 </html>
